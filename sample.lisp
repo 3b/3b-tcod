@@ -1259,7 +1259,7 @@ SPACE : rebuild dungeon~%!
                                               :renderer-type :sdl2
                                               :tileset tileset
                                               :vsync vsync
-                                              :y 32))
+                                              :columns 80 :rows 50))
                (credits-end nil)
                (start-time (sdl2:get-ticks))
                (last-time (sdl2:get-ticks))
