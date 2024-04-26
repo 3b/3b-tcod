@@ -1238,7 +1238,7 @@ SPACE : rebuild dungeon~%!
 ;;* ***************************
 
 (defvar *shown* nil)
-(defun main ()
+(defun main (&optional integer-scaling (keep-aspect t))
   (%tcod::sdl-log-set-all-priority :verbose)
   (tcod:set-log-callback (cffi:callback print-log) 0)
   (float-features:with-float-traps-masked (:overflow :invalid)
@@ -1386,7 +1386,10 @@ SPACE : rebuild dungeon~%!
                           (sample-render cur-sample on-draw-event)
 
                           ;; update the game screen
-                          (tcod:context-present *g-context* main-console)
+                          (tcod:context-present *g-context* main-console
+                                                :integer-scaling integer-scaling
+                                                :keep-aspect keep-aspect
+                                                :clear-color :dark-blue)
 
                           ;; check for events
                           (sdl2:with-sdl-event (event)
