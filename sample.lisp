@@ -1238,14 +1238,19 @@ SPACE : rebuild dungeon~%!
 ;;* ***************************
 
 (defvar *shown* nil)
-(defun main (&optional integer-scaling (keep-aspect t))
+(defun main (&key integer-scaling (keep-aspect t)
+               (font (tcod-data "fonts/dejavu12x12_gs_tc.png"))
+               (font-rows 8)
+               (font-columns 32)
+               (font-charset %tcod::+charmap-tcod+))
   (%tcod::sdl-log-set-all-priority :verbose)
   (tcod:set-log-callback (cffi:callback print-log) 0)
   (float-features:with-float-traps-masked (:overflow :invalid)
     (sdl2:with-sdl-event (on-enter-event +on-enter-userevent+)
       (sdl2:with-sdl-event (on-draw-event +on-draw-userevent+)
-        (let* ((font (tcod-data "fonts/dejavu12x12_gs_tc.png"))
-               (tileset (tcod:tileset-load font 32 8 %tcod::+charmap-tcod+))
+        (let* ((tileset (tcod:tileset-load font
+                                           font-columns font-rows
+                                           font-charset))
                (main-console (tcod:console-new 80 50))
                (vsync t)
                (*g-context* (tcod:context-new "libtcod CL sample"
@@ -1479,3 +1484,5 @@ SPACE : rebuild dungeon~%!
 
 #++
 (main)
+#++
+(main :font (tcod-data "fonts/dejavu16x16_gs_tc.png"))
