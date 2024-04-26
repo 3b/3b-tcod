@@ -1241,7 +1241,7 @@ SPACE : rebuild dungeon~%!
 (defun main ()
   (%tcod::sdl-log-set-all-priority :verbose)
   (tcod:set-log-callback (cffi:callback print-log) 0)
-  (float-features:with-float-traps-masked (:overflow)
+  (float-features:with-float-traps-masked (:overflow :invalid)
     (sdl2:with-sdl-event (on-enter-event +on-enter-userevent+)
       (sdl2:with-sdl-event (on-draw-event +on-draw-userevent+)
         (let* ((font (tcod-data "fonts/dejavu12x12_gs_tc.png"))
