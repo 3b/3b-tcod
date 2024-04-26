@@ -209,7 +209,7 @@
                        "%s" :string
                        (apply #'format nil fmt args)))
 
-(defun console-printf-rect-ex (console x y w h fmt &rest args)
+(defun console-printf-rect (console x y w h fmt &rest args)
   (%:console-printf-rect console x y w h
                          "%s" :string
                          (apply #'format nil fmt args)))
