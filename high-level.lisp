@@ -388,7 +388,7 @@
       (pz %::rows rows)
       (p %::renderer-type (if renderer-type
                               (print (cffi:foreign-enum-value
-                                      '%::renderer renderer-type))
+                                      '%::renderer-type renderer-type))
                               0))
       (p %::tileset (or tileset (cffi:null-pointer)))
       (p %::vsync (if vsync 1 0))
