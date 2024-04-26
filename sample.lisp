@@ -1242,7 +1242,8 @@ SPACE : rebuild dungeon~%!
                (font (tcod-data "fonts/dejavu12x12_gs_tc.png"))
                (font-rows 8)
                (font-columns 32)
-               (font-charset %tcod::+charmap-tcod+))
+               (font-charset %tcod::+charmap-tcod+)
+               x y width height)
   (%tcod::sdl-log-set-all-priority :verbose)
   (tcod:set-log-callback (cffi:callback print-log) 0)
   (float-features:with-float-traps-masked (:overflow :invalid)
@@ -1255,11 +1256,14 @@ SPACE : rebuild dungeon~%!
                (vsync t)
                (*g-context* (tcod:context-new "libtcod CL sample"
                                               :console main-console
-                                              :sdl-window-flags :resizable
+                                              :sdl-window-flags '(:resizable
+                                                                  :allow-highdpi)
                                               :renderer-type :sdl2
                                               :tileset tileset
                                               :vsync vsync
-                                              :columns 80 :rows 50))
+                                              :columns 80 :rows 50
+                                              :x x :y y
+                                              :width width :height height))
                (credits-end nil)
                (start-time (sdl2:get-ticks))
                (last-time (sdl2:get-ticks))
