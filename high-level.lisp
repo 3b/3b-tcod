@@ -8,6 +8,15 @@
     (%:line-init-mt x-from y-from x-to y-to l)
     l))
 
+(defun line-step-mt (line*)
+  (cffi:with-foreign-objects ((x :int) (y :int))
+    (values (%:line-step-mt x y line*)
+            (cffi:mem-ref x :int) (cffi:mem-ref y :int))))
+
+(with-line-mt (line 1 1 5 10)
+  (loop repeat 12
+        collect (multiple-value-list (line-step-mt line))))
+
 (defun line-mt-delete (line*)
   (cffi:foreign-free line*))
 
@@ -58,8 +67,8 @@
                                           ''(:struct %::color-rgba)
                                           ''(:struct %::color)))
          ,@(when init (if alpha
-                          `((to-rgba* ,c ,tmp))
-                          `((to-color* ,c ,tmp))))
+                          `((when ,tmp (to-rgba* ,c ,tmp)))
+                          `((when ,tmp (to-color* ,c ,tmp)))))
          (progn ,@body)))))
 
 (defun color-hsv (h s v)
@@ -142,7 +151,7 @@
                                dst dst-x dst-y
                                foreground-alpha background-alpha key-color)
   (with-color* (key-color :init key-color)
-    (%:console-blit-key-color src src-x src-y src-w src-h
+    (%:console-blit-key-color src src-x src-y (or src-w 0) (or src-h 0)
                               dst dst-x dst-y
                               foreground-alpha background-alpha key-color)))
 
@@ -237,16 +246,19 @@
 
 (defun console-printn (console x y str fg bg flag alignment
                        &key start end)
-  (with-color* (fg :init fg)
-    (with-color* (bg :init bg)
+  (with-color* (pfg :init fg)
+    (with-color* (pbg :init bg)
       (cffi:with-foreign-string ((pstr n) (if (or start end)
                                               (subseq str (or start 0)
                                                       (or end (length str)))
                                               start))
-        (%:console-printn console x y n str fg bg flag alignment)))))
+        (%:console-printn console x y n str
+                          (if fg pfg (cffi:null-pointer))
+                          (if bg pbg (cffi:null-pointer))
+                          flag alignment)))))
 
 (defun console-printn-rect (console x y w h str fg bg flag alignment
-                            &key (start 0) (end (1- (length str))))
+                            &key (start 0) (end (1- (length str)))S)
   (with-color* (fg :init fg)
     (with-color* (bg :init bg)
       (cffi:with-foreign-string ((pstr n) (if (or start end)
@@ -324,7 +336,7 @@
         (assert (and (plusp (cffi:mem-ref w :int))
                      (< 0 s (expt 2 26))))
         (cffi:with-foreign-object (p :uint32 s)
-          (print (%:context-screen-capture context p w h))
+          (%:context-screen-capture context p w h)
           (if 2d-array
               (cffi:foreign-array-to-lisp
                p `(:array :uint32 ,(cffi:mem-ref h :int) ,(cffi:mem-ref w :int))
@@ -413,6 +425,7 @@
       (%::checked (%:context-new cp out))
       (cffi:mem-ref out :pointer))))
 
+(defvar *with-context-init-hook* nil)
 ;; not sure if this is generally useful, but nice for quick tests
 (defmacro with-context ((var title &rest args
                          &key  x y width height
@@ -430,7 +443,10 @@
                    console))
   `(let ((,var (context-new ,title ,@args)))
      (unwind-protect
-          (progn ,@body)
+          (progn
+            ;; workaround for windows oddness with first window
+            (mapcar (a:rcurry #'funcall ,var) *with-context-init-hook*)
+            ,@body)
        (context-delete ,var))))
 
 (defmacro with-console ((var w h) &body body)

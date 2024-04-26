@@ -321,7 +321,9 @@
    #:line-line
    #:console-is-fullscreen
    #:with-bsp-node
-   #:context-present))
+   #:context-present
+   #:+charmap-cp437+
+   #:+charmap-tcod+))
 
 (defpackage 3b-tcod
   (:use :cl)
@@ -398,8 +400,8 @@
                 #:console-is-fullscreen
                 ;; console_printing.h
                 #:console-set-color-control
-                #:console-get-height-rect-n
-                #:console-get-height-rect-wn
+                ;#:console-get-height-rect-n
+                ;#:console-get-height-rect-wn
                 ;; console_rexpaint.h
                 #:console-from-xp
                 #:console-load-xp
@@ -492,7 +494,6 @@
                 #:random-get-double-mean
                 #:random-dice-roll-s
                 #:namegen-parse
-
                 ;; namegen.h
                 #:namegen-parse
                 #:namegen-destroy
@@ -531,27 +532,16 @@
                 #:text-get
                 #:text-reset
                 #:text-delete
-
-
-
-
-
-
-
-                ;;
-
-                #:noise-delete
-                #:image-new
-                #:image-put-pixel
-                #:image-blit
-                #:image-blit-2x
-                #:image-blit-rect)
+                ;; charmaps
+                #:+charmap-cp437+
+                #:+charmap-tcod+)
 
   (:export
    ;; bresenham.h
    #:line
    #:line-mt-delete
    #:line-mt-new
+   #:line-step-mt
    #:with-line-mt
    ;; bsp.h
    #:bsp-new
@@ -828,4 +818,10 @@
 
    ;; misc helpers
    #:sdl2-event-case
-   #:sdl2-scancode-case))
+   #:sdl2-scancode-case
+   #:with-context
+   #:with-console
+   ;; charmaps
+   #:+charmap-cp437+
+   #:+charmap-tcod+
+   #:sdl2-toggle-fullscreen))
