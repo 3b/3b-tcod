@@ -13,10 +13,6 @@
     (values (%:line-step-mt x y line*)
             (cffi:mem-ref x :int) (cffi:mem-ref y :int))))
 
-(with-line-mt (line 1 1 5 10)
-  (loop repeat 12
-        collect (multiple-value-list (line-step-mt line))))
-
 (defun line-mt-delete (line*)
   (cffi:foreign-free line*))
 
