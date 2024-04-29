@@ -1024,6 +1024,10 @@
                (setf min-y (random-int min-y (1+ (- max-y *min-room-size*))))
                (setf max-x (random-int (1- (+ min-x *min-room-size*)) max-x))
                (setf max-y (random-int (1- (+ min-y *min-room-size*)) max-y)))
+             (setf min-x (max min-x 1))
+             (setf min-y (max min-y 1))
+             (setf max-x (a:clamp max-x min-x (- +sample-screen-width+ 2)))
+             (setf max-y (a:clamp max-y min-y (- +sample-screen-height+ 2)))
              ;; resize the node to fit the room
              (setf x min-x)
              (setf y min-y)
